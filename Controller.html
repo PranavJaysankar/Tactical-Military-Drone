@@ -1,5 +1,3 @@
-<!--prototype webpage ,will update once the buttons have been aligned properly-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,16 +59,62 @@
 
         /* Style for the on/off switch */
         .switch {
-            margin-top: 20px;
             display: flex;
+            height: 10vh;
             justify-content: center;
         }
+        #altitudeInput {
+        margin-top: 20px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        }
+        .controls-container {
+        display: flex;
+        justify-content: space-between;
+        }
+        .controller {
+        margin-top: 20px;
+        display: flex;
+        margin-left: 30px;
+        justify-content: flex-start; /* Align controls to the left */
+        }
+        #controls {
+         display: inline-grid;
+         grid-column-gap: 10;
+         align-self: end;
+        }
+        #keyboard_key_up {
+         grid-column-start: 2;
+         margin-bottom: 20PX;
+        }
+
+        #keyboard_key_left {
+            grid-column-start: 1;
+            margin-right: 10px;
+        }
+
+        #keyboard_key_down {
+            margin-top: 20px;
+        }
+
+        #keyboard_key_right {
+            grid-column-start: 3;
+            margin-left: 10px;
+            }
 
         /* Style for the rotation buttons */
         .rotate-buttons {
             margin-top: 20px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
+            margin-right: 20px;
+
+        }
+        .rotate-buttons button {
+            margin-left: 10px;
         }
     </style>
 
@@ -96,33 +140,40 @@
     
 </div>
 <div class="buttonforcamera">
-<button class="activate-button" onclick="activateCamera('front')">Activate Front Camera</button>
-<button class="activate-button" onclick="activateCamera('rearLeft')">Activate Rear Left Camera</button>
-<button class="activate-button" onclick="activateCamera('rearRight')">Activate Rear Right Camera</button>
+    <button class="activate-button" onclick="activateCamera('front')">Activate Front Camera</button>
+    <button class="activate-button" onclick="activateCamera('rearLeft')">Activate Rear Left Camera</button>
+    <button class="activate-button" onclick="activateCamera('rearRight')">Activate Rear Right Camera</button>
 </div>
 
 <!-- Altitude Input Box -->
+
 <input type="text" id="altitudeInput" placeholder="Enter Altitude">
 
+
 <!-- Controller Buttons -->
+<div class="controls-container">
 <div class="controller">
-    <button onclick="move('forward')">Forward</button>
-    <button onclick="move('backward')">Backward</button>
-    <button onclick="move('left')">Left</button>
-    <button onclick="move('right')">Right</button>
+    <div id="controls">
+        <button id="keyboard_key_up" class="movements_control">FORWARD</button>
+        <button id="keyboard_key_left" class="movements_control">LEFT</button>
+        <button id="keyboard_key_down" class="movements_control">DOWNWARD</button>
+        <button id="keyboard_key_right" class="movements_control">RIGHT</button>
+    </div>
 </div>
 
-<!-- On/Off Switch -->
-<div class="switch">
-    <label>On/Off
-        <input type="checkbox" id="onOffSwitch">
-    </label>
-</div>
+
 
 <!-- Rotation Buttons -->
 <div class="rotate-buttons">
     <button onclick="rotate('anticlockwise')">Anticlockwise</button>
     <button onclick="rotate('clockwise')">Clockwise</button>
+</div>
+</div>
+<!-- On/Off Switch -->
+<div class="switch">
+    <label>On/Off
+        <input type="checkbox" id="onOffSwitch">
+    </label>
 </div>
 
 <script>
@@ -141,14 +192,42 @@
             displayElement.innerHTML = '<img src="default_image_' + display + '.jpg" alt="Default Image">';
         } else {
             // If the camera is not active, activate it
-            startCamera(display);
+            chooseCamera(display);
         }
     }
 
-    function startCamera(display) {
+    function chooseCamera(display) {
+        navigator.mediaDevices.enumerateDevices()
+            .then(function (devices) {
+                var videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                if (videoDevices.length > 0) {
+                    // Display a list of available cameras for the user to choose from
+                    var cameraList = videoDevices.map(device => ({
+                        label: device.label || 'Camera ' + (videoDevices.indexOf(device) + 1),
+                        deviceId: device.deviceId,
+                    }));
+
+                    var selectedCamera = prompt('Select camera for ' + display + ': \n' +
+                        cameraList.map((camera, index) => index + 1 + '. ' + camera.label).join('\n'));
+
+                    if (selectedCamera !== null) {
+                        // User selected a camera, start it
+                        startCamera(display, cameraList[selectedCamera - 1].deviceId);
+                    }
+                } else {
+                    alert('No video devices found.');
+                }
+            })
+            .catch(function (error) {
+                console.error('Error enumerating devices:', error);
+            });
+    }
+
+    function startCamera(display, deviceId) {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
-                .getUserMedia({ video: { facingMode: display === 'front' ? 'user' : 'environment' } })
+                .getUserMedia({ video: { facingMode: display === 'front' ? 'user' : 'environment', deviceId: deviceId } })
                 .then(function (stream) {
                     cameraStreams[display] = stream;
 
