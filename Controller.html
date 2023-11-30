@@ -1,0 +1,193 @@
+<!--prototype webpage ,will update once the buttons have been aligned properly-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Style for the camera display row */
+        .camera-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .buttonforcamera {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px;
+        }
+
+        /* Style for the camera container */
+        .camera-container {
+            border: 2px solid black;
+            padding: 10px;
+            width: 300px;
+            height: 200px;
+            position: relative;
+            text-align: center; /* Center the content inside the container */
+        }
+
+        /* Style for the video elements */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Style for the "Activate" button */
+        .activate-button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: white; /* Set background color */
+        }
+
+        /* Style for the input box */
+        #altitudeInput {
+            margin-top: 20px;
+        }
+
+        /* Style for the controller buttons */
+        .controller {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Style for the on/off switch */
+        .switch {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Style for the rotation buttons */
+        .rotate-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+
+    <title>Your Website</title>
+</head>
+<body>
+
+<!-- Camera Display Row -->
+<div class="camera-row">
+    <div class="camera-container" id="frontDisplay">
+        <img src="default_image_front.jpg" alt="Default Image">
+    </div>
+    
+
+    <div class="camera-container" id="rearLeftDisplay">
+        <img src="default_image_left.jpg" alt="Default Image">
+    </div>
+    
+
+    <div class="camera-container" id="rearRightDisplay">
+        <img src="default_image_right.jpg" alt="Default Image">
+    </div>
+    
+</div>
+<div class="buttonforcamera">
+<button class="activate-button" onclick="activateCamera('front')">Activate Front Camera</button>
+<button class="activate-button" onclick="activateCamera('rearLeft')">Activate Rear Left Camera</button>
+<button class="activate-button" onclick="activateCamera('rearRight')">Activate Rear Right Camera</button>
+</div>
+
+<!-- Altitude Input Box -->
+<input type="text" id="altitudeInput" placeholder="Enter Altitude">
+
+<!-- Controller Buttons -->
+<div class="controller">
+    <button onclick="move('forward')">Forward</button>
+    <button onclick="move('backward')">Backward</button>
+    <button onclick="move('left')">Left</button>
+    <button onclick="move('right')">Right</button>
+</div>
+
+<!-- On/Off Switch -->
+<div class="switch">
+    <label>On/Off
+        <input type="checkbox" id="onOffSwitch">
+    </label>
+</div>
+
+<!-- Rotation Buttons -->
+<div class="rotate-buttons">
+    <button onclick="rotate('anticlockwise')">Anticlockwise</button>
+    <button onclick="rotate('clockwise')">Clockwise</button>
+</div>
+
+<script>
+    var cameraStreams = {
+        front: null,
+        rearLeft: null,
+        rearRight: null,
+    };
+
+    function activateCamera(display) {
+        var displayElement = document.getElementById(display + 'Display');
+
+        if (cameraStreams[display]) {
+            // If the camera is already active, deactivate it
+            stopCamera(display);
+            displayElement.innerHTML = '<img src="default_image_' + display + '.jpg" alt="Default Image">';
+        } else {
+            // If the camera is not active, activate it
+            startCamera(display);
+        }
+    }
+
+    function startCamera(display) {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices
+                .getUserMedia({ video: { facingMode: display === 'front' ? 'user' : 'environment' } })
+                .then(function (stream) {
+                    cameraStreams[display] = stream;
+
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+
+                    const displayElement = document.getElementById(display + 'Display');
+                    displayElement.innerHTML = '';
+                    displayElement.appendChild(video);
+                })
+                .catch(function (error) {
+                    console.error('Error accessing camera:', error);
+                });
+        } else {
+            alert('getUserMedia not supported in this browser.');
+        }
+    }
+
+    function stopCamera(display) {
+        if (cameraStreams[display]) {
+            var tracks = cameraStreams[display].getTracks();
+            tracks.forEach(function (track) {
+                track.stop();
+            });
+            cameraStreams[display] = null;
+        }
+    }
+
+    function move(direction) {
+        // Implement movement logic based on direction
+        console.log('Move ' + direction);
+    }
+
+    function rotate(rotation) {
+        // Implement rotation logic based on rotation direction
+        console.log('Rotate ' + rotation);
+    }
+</script>
+
+</body>
+</html>
