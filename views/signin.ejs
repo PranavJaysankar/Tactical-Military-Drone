@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipzon Create Account</title>
+    <link rel="Shortcut Icon" type="images" href="./imgs/favicon4.png">
+    <link rel="stylesheet" href="/css/sigin_login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1 class="neon-text">CREATE ACCOUNT</h1>
+    </header>
+    <form action="signin" method="post" id="form">
+        
+        <div class="container">
+            <div class="image-container"><img src="/img/gettyimages-1295823260-612x612-removebg (1).png " alt="OOPS something went wrong" width="100%"></div>
+            
+            <div>
+                <p>
+                    <label for="name"><b>Your Name</b></label>
+                    <input type="text" id="name" name="name">
+                    <span class="error"></span>
+                </p>
+                <p>
+                    <label for="mobile"><b>Mobile Number</b></label>
+                    <input type="tel" id="mobile" name="mobile">
+                    <span class="error"></span>
+                    
+                </p>
+                <p>
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" id="email" name="email">
+                    <span class="error"></span>
+                   
+                </p>
+                <p>
+                    <label for="password"><b>Password</b></label>
+                    <input type="password" id="password" name="password">
+                    <span class="error">Your password should be8 characters long</span>
+                </p>
+                <p>On enrolling your email and mobile number, you will be receiving messages from us</p>
+                <button type="submit" id="sub">Create account</button>
+            </div>
+            
+        </div>
+    </form>
+    <p style="color: whitesmoke; text-align: center;">Already have an account? <a href="login">LOGIN?</a></p>
+
+    <script >
+        const form = document.getElementById("form");
+const username = document.getElementById("name");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const mobile = document.getElementById("mobile");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (
+    validateInputs() &&
+    password.parentElement.classList.contains("success")
+  ) {
+    form.submit();
+  }
+});
+
+const setError = (element, message) => {
+  const inputControl = element.parentElement;
+  const errorDisplay = inputControl.querySelector(".error");
+
+  if (errorDisplay) {
+    errorDisplay.innerText = message;
+    inputControl.classList.add("error");
+    inputControl.classList.remove("success");
+  }
+};
+
+const setSuccess = (element) => {
+  const inputControl = element.parentElement;
+  const errorDisplay = inputControl.querySelector(".error");
+
+  if (errorDisplay) {
+    errorDisplay.innerText = "";
+    inputControl.classList.add("success");
+    inputControl.classList.remove("error");
+  }
+};
+
+const isValidEmail = (email) => {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
+const isValidMobile = (mobile) => {
+  const re = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+  return re.test(String(mobile));
+};
+
+const validateInputs = () => {
+  let isValid = true;
+
+  const usernameValue = username.value.trim();
+  const emailValue = email.value.trim();
+  const passwordValue = password.value.trim();
+  const mobileValue = mobile.value.trim();
+
+  if (usernameValue === "") {
+    setError(username, "Username is required");
+    isValid = false;
+  } else {
+    setSuccess(username);
+  }
+
+  if (mobileValue === "") {
+    setError(mobile, "Mobile Number is required");
+    isValid = false;
+  } else if (!isValidMobile(mobileValue)) {
+    setError(mobile, "Provide a valid mobile number");
+    isValid = false;
+  } else {
+    setSuccess(mobile);
+  }
+
+  if (emailValue === "") {
+    setError(email, "Email is required");
+    isValid = false;
+  } else if (!isValidEmail(emailValue)) {
+    setError(email, "Provide a valid email address");
+    isValid = false;
+  } else {
+    setSuccess(email);
+  }
+
+  return isValid;
+};
+
+const validatePass = () => {
+  const passwordValue = password.value.trim();
+
+  if (passwordValue.length < 8) {
+    setError(password, "Password must be at least 8 characters");
+  } else if (!/\d/.test(passwordValue)) {
+    setError(password, "Password must contain at least one digit");
+  } else if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(passwordValue)) {
+    setError(password, "Password must contain at least one special character");
+  } else {
+    setSuccess(password);
+  }
+};
+
+password.addEventListener("keyup", (e) => {
+  const key = e.key;
+  if (key === "Backspace") {
+    validatePass();
+  }
+});
+
+setInterval(validatePass, 500);
+
+    </script>
+</body>
+</html>

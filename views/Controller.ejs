@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/controller.css">
+
+    <title>Your Website</title>
+</head>
+<body>
+
+<!-- Camera Display Row -->
+<div class="camera-row">
+    <div class="camera-container" id="frontDisplay">
+        <img src="default_image_front.jpg" alt="Default Image">
+    </div>
+    
+
+    <div class="camera-container" id="rearLeftDisplay">
+        <img src="default_image_left.jpg" alt="Default Image">
+    </div>
+    
+
+    <div class="camera-container" id="rearRightDisplay">
+        <img src="default_image_right.jpg" alt="Default Image">
+    </div>
+    
+</div>
+<div class="buttonforcamera">
+    <button class="activate-button" onclick="activateCamera('front')">Activate Front Camera</button>
+    <button class="activate-button" onclick="activateCamera('rearLeft')">Activate Rear Left Camera</button>
+    <button class="activate-button" onclick="activateCamera('rearRight')">Activate Rear Right Camera</button>
+</div>
+
+<!-- Altitude Input Box -->
+
+<input type="text" id="altitudeInput" placeholder="Enter Altitude">
+
+
+<!-- Controller Buttons -->
+<div class="controls-container">
+<div class="controller">
+    <div id="controls">
+        <button id="keyboard_key_up" class="movements_control">FORWARD</button>
+        <button id="keyboard_key_left" class="movements_control">LEFT</button>
+        <button id="keyboard_key_down" class="movements_control">BACKWARD</button>
+        <button id="keyboard_key_right" class="movements_control">RIGHT</button>
+        <button id="keyboard_key_upward" class="movements_control">UPWARD</button>
+        <button id="keyboard_key_downward" class="movements_control">DOWNWARD</button>
+    </div>
+</div>
+
+
+
+<!-- Rotation Buttons -->
+<div class="rotate-buttons">
+    <button onclick="rotate('anticlockwise')">Anticlockwise</button>
+    <button onclick="rotate('clockwise')">Clockwise</button>
+</div>
+</div>
+<!-- On/Off Switch -->
+<div class="switch">
+    <label>On/Off
+        <input type="checkbox" id="onOffSwitch">
+    </label>
+</div>
+
+
+<!-- RPM Controls -->
+<div class="rpm-controls">
+    <!-- RPM Slider -->
+    <label for="rpmSlider">Set RPM:</label>
+    <input type="range" id="rpmSlider" min="0" max="8000" value="3000" oninput="updateRPMFromSlider(this.value)">
+
+    <!-- RPM Input Box -->
+    <label for="rpmInput">Manual RPM:</label>
+    <input type="number" id="rpmInput" value="3000" oninput="updateRPMFromInput(this.value)">
+</div>
+
+<!-- RPM Meter Container -->
+<div class="rpm-meter-container">
+    <!-- RPM Meter -->
+    <div class="rpm-meter" id="rpmMeter">
+        <!-- RPM Indicator -->
+        <div class="rpm-indicator" id="rpmIndicator"></div>
+    </div>
+</div>
+
+<script>
+    var cameraStreams = {
+        front: null,
+        rearLeft: null,
+        rearRight: null,
+    };
+
+    function activateCamera(display) {
+        var displayElement = document.getElementById(display + 'Display');
+
+        if (cameraStreams[display]) {
+            // If the camera is already active, deactivate it
+            stopCamera(display);
+            displayElement.innerHTML = '<img src="default_image_' + display + '.jpg" alt="Default Image">';
+        } else {
+            // If the camera is not active, activate it
+            chooseCamera(display);
+        }
+    }
+
+    function chooseCamera(display) {
+        navigator.mediaDevices.enumerateDevices()
+            .then(function (devices) {
+                var videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                if (videoDevices.length > 0) {
+                    // Display a list of available cameras for the user to choose from
+                    var cameraList = videoDevices.map(device => ({
+                        label: device.label || 'Camera ' + (videoDevices.indexOf(device) + 1),
+                        deviceId: device.deviceId,
+                    }));
+
+                    var selectedCamera = prompt('Select camera for ' + display + ': \n' +
+                        cameraList.map((camera, index) => index + 1 + '. ' + camera.label).join('\n'));
+
+                    if (selectedCamera !== null) {
+                        // User selected a camera, start it
+                        startCamera(display, cameraList[selectedCamera - 1].deviceId);
+                    }
+                } else {
+                    alert('No video devices found.');
+                }
+            })
+            .catch(function (error) {
+                console.error('Error enumerating devices:', error);
+            });
+    }
+
+    function startCamera(display, deviceId) {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices
+                .getUserMedia({ video: { facingMode: display === 'front' ? 'user' : 'environment', deviceId: deviceId } })
+                .then(function (stream) {
+                    cameraStreams[display] = stream;
+
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+
+                    const displayElement = document.getElementById(display + 'Display');
+                    displayElement.innerHTML = '';
+                    displayElement.appendChild(video);
+                })
+                .catch(function (error) {
+                    console.error('Error accessing camera:', error);
+                });
+        } else {
+            alert('getUserMedia not supported in this browser.');
+        }
+    }
+
+    function stopCamera(display) {
+        if (cameraStreams[display]) {
+            var tracks = cameraStreams[display].getTracks();
+            tracks.forEach(function (track) {
+                track.stop();
+            });
+            cameraStreams[display] = null;
+        }
+    }
+
+    function move(direction) {
+        // Implement movement logic based on direction
+        console.log('Move ' + direction);
+    }
+
+    function rotate(rotation) {
+        // Implement rotation logic based on rotation direction
+        console.log('Rotate ' + rotation);
+    }
+    function updateRPM(value) {
+        // Update the RPM Meter
+        updateRPMIndicator(value);
+
+        // Send HTTP POST request to Raspberry Pi
+        fetch('http://192.168.1.103:5000/update_rpm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rpm: value }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function updateRPMFromSlider(value) {
+        // Update the RPM Input Box
+        document.getElementById('rpmInput').value = value;
+
+        // Update the RPM Meter and send HTTP request
+        updateRPM(value);
+    }
+
+    function updateRPMFromInput(value) {
+        // Ensure the entered value is within the RPM range
+        var rpm = Math.min(8000, Math.max(0, value));
+
+        // Update the RPM Slider
+        document.getElementById('rpmSlider').value = rpm;
+
+        // Update the RPM Meter and send HTTP request
+        updateRPM(rpm);
+    }
+</script>
+
+</body>
+</html>

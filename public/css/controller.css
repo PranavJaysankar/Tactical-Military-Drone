@@ -1,0 +1,132 @@
+/* Style for the camera display row */
+.camera-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.buttonforcamera {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px;
+}
+
+/* Style for the camera container */
+.camera-container {
+    border: 2px solid black;
+    padding: 10px;
+    width: 300px;
+    height: 200px;
+    position: relative;
+    text-align: center; /* Center the content inside the container */
+}
+
+/* Style for the video elements */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Style for the "Activate" button */
+.activate-button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: white; /* Set background color */
+}
+
+/* Style for the input box */
+#altitudeInput {
+    margin-top: 20px;
+}
+
+/* Style for the controller buttons */
+.controller {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Style for the on/off switch */
+.switch {
+    display: flex;
+    height: 10vh;
+    justify-content: center;
+}
+#altitudeInput {
+margin-top: 20px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-top: 20px;
+margin-bottom: 20px;
+}
+.controls-container {
+display: flex;
+justify-content: space-between;
+}
+.controller {
+margin-top: 20px;
+display: flex;
+margin-left: 30px;
+justify-content: flex-start; /* Align controls to the left */
+}
+#controls {
+ display: inline-grid;
+ grid-column-gap: 10;
+ align-self: end;
+}
+#keyboard_key_up {
+ grid-column-start: 2;
+ margin-bottom: 20PX;
+}
+
+#keyboard_key_left {
+    grid-column-start: 1;
+    margin-right: 10px;
+}
+
+#keyboard_key_down {
+    margin-top: 20px;
+}
+
+#keyboard_key_right {
+    grid-column-start: 3;
+    margin-left: 10px;
+    }
+    #keyboard_key_upward,
+    #keyboard_key_downward {
+        margin-top: 20px;
+    }
+
+    #keyboard_key_upward {
+    margin-right: 10px;
+        }    
+
+/* Style for the rotation buttons */
+.rotate-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
+
+}
+.rotate-buttons button {
+    margin-left: 10px;
+}
+/* Style for RPM Controls */
+.rpm-controls {
+margin-top: 20px;
+text-align: center;
+}
+
+/* Style for RPM Slider and Input */
+#rpmSlider,
+#rpmInput {
+width: 150px;
+margin: 5px;
+}
