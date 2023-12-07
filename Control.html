@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body{
-            background-color:gainsboro;
+            background-color:rgb(220, 191, 155);
         }
         /* Style for the camera display row */
         .camera-row {
@@ -202,6 +202,64 @@
             height: 10vh;
             justify-content: center;
         }
+        .switch-label {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 33px;
+}
+        .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 15px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
         #altitudeInput {
         margin-top: 20px;
         display: block;
@@ -227,7 +285,7 @@
         }
         #keyboard_key_up {
          grid-column-start: 2;
-         margin-bottom: 20PX;
+         margin-bottom: 1PX;
         }
 
         #keyboard_key_left {
@@ -243,6 +301,14 @@
             grid-column-start: 3;
             margin-left: 10px;
             }
+            #keyboard_key_upward,
+            #keyboard_key_downward {
+                margin-top: 20px;
+            }
+
+            #keyboard_key_upward {
+            margin-right: 10px;
+                }    
 
         /* Style for the rotation buttons */
         .rotate-buttons {
@@ -277,17 +343,17 @@
 <!-- Camera Display Row -->
 <div class="camera-row">
     <div class="camera-container" id="frontDisplay">
-        <img src="default_image_front.jpg" alt="Default Image">
+        <img src="C:\Users\ASUS\Documents\CTF\drone1.avif" width="300px" height="200px" alt="Default Image">
     </div>
     
 
     <div class="camera-container" id="rearLeftDisplay">
-        <img src="default_image_left.jpg" alt="Default Image">
+        <img src="C:\Users\ASUS\Documents\CTF\drone2.png" width="300px" height="200px" alt="Default Image">
     </div>
     
 
     <div class="camera-container" id="rearRightDisplay">
-        <img src="default_image_right.jpg" alt="Default Image">
+        <img src="C:\Users\ASUS\Documents\CTF\drone3.avif" width="300px" height="200px" alt="Default Image">
     </div>
     
 </div>
@@ -299,7 +365,7 @@
 
 <!-- Altitude Input Box -->
 
-<input type="text" id="altitudeInput" placeholder="Enter Altitude">
+<input type="text" style="width: 250px;height: 35px;" id="altitudeInput" placeholder="Enter Altitude">
 
 
 <!-- Controller Buttons -->
@@ -308,8 +374,10 @@
     <div id="controls">
         <button id="keyboard_key_up" class="con-button" style="--clr:#39FF14"><span>FORWARD</span></button>
         <button id="keyboard_key_left" class="con-button" style="--clr:#FF44CC"><span>LEFT</span></button>
-        <button id="keyboard_key_down" class="con-button" style="--clr:#0FF0FC"><span>DOWNWARD</span></button>
+        <button id="keyboard_key_down" class="con-button" style="--clr:#0FF0FC"><span>BACKWARD</span></button>
         <button id="keyboard_key_right" class="con-button" style="--clr:#8A2BE2"><span>RIGHT</span></button>
+        <button id="keyboard_key_upward"  class="con-button" style="--clr:#39FF14"><span>UPWARD</span></button>
+        <button id="keyboard_key_downward" class="con-button" style="--clr:#0FF0FC"><span>DOWNWARD</span></button>
     </div>
 </div>
 
@@ -323,8 +391,9 @@
 </div>
 <!-- On/Off Switch -->
 <div class="switch">
-    <label>On/Off
+    <label class="switch-label">
         <input type="checkbox" id="onOffSwitch">
+        <span class="slider round"></span>
     </label>
 </div>
 
