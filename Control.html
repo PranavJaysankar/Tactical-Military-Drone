@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body{
-            background-color:rgb(156, 140, 121));
+        @import url('https://fonts.googleapis.com/css2?family=Electrolize&display=swap');
+        body {
+            font-family: "Electrolize", sans-serif;
+            font-weight: 400;
+            font-style: normal;
         }
-        /* Style for the camera display row */
         .camera-row {
             display: flex;
             justify-content: space-around;
@@ -26,6 +28,7 @@
         /* Style for the camera container */
         .camera-container {
             border: 2px solid black;
+            border-radius: 10px;
             padding: 10px;
             width: 300px;
             height: 200px;
@@ -69,7 +72,7 @@
   color: #fff;
   text-decoration: none;
   text-transform: uppercase;
-  border: none;
+  border-radius: 2px;
   letter-spacing: 0.1rem;
   font-size: 1rem;
   padding: 1rem 3rem;
@@ -81,7 +84,7 @@
   padding: 1.1rem 3.1rem;
   background: var(--clr);
   color: var(--clr);
-  /* box-shadow: 0 0 35px var(--clr); */
+  box-shadow: 0 0 35px var(--clr);
   animation: box 3s infinite;
 }
 
@@ -162,9 +165,7 @@
   }
 }
 .rot-button {
-  --c:  #229091; /* the color*/
-  
-  box-shadow: 0 0 0 .1em inset var(--c); 
+  --c:  #229091; 
   --_g: linear-gradient(var(--c) 0 0) no-repeat;
   background: 
     var(--_g) calc(var(--_p,0%) - 100%) 0%,
@@ -174,16 +175,22 @@
   background-size: 50.5% calc(var(--_p,0%)/2 + .5%);
   outline-offset: .1em;
   transition: background-size .4s, background-position 0s .4s;
+  font-size: 1rem; /* Added font-size property */
+  padding: 1rem 3rem; /* Adjusted padding */
+  letter-spacing: 0.1rem;
 }
+
 .rot-button:hover {
   --_p: 100%;
   transition: background-position .4s, background-size 0s;
 }
+
 .rot-button:active {
   box-shadow: 0 0 9e9q inset #0009; 
   background-color: var(--c);
   color: #fff;
 }
+
         
         /* Style for the input box */
         #altitudeInput {
@@ -209,7 +216,7 @@
   width: 60px;
   height: 33px;
 }
-        .slider {
+.slider {
   position: absolute;
   cursor: pointer;
   top: 0;.switch {
@@ -217,7 +224,7 @@
   display: inline-block;
   width: 60px;
   height: 34px;
-}
+  }
   left: 0;
   right: 0;
   bottom: 0;
@@ -275,7 +282,7 @@ input:checked + .slider:before {
         }
         .controller {
         margin-top: 20px;
-        display: flex;
+        
         margin-left: 30px;
         justify-content: flex-start; /* Align controls to the left */
         }
@@ -308,8 +315,12 @@ input:checked + .slider:before {
             }
 
             #keyboard_key_upward {
-            margin-right: 10px;
-                }    
+            grid-row-start: 3;
+                } 
+                #keyboard_key_downward {
+                    grid-row: 3;
+                    grid-column: 3;
+                }       
 
         /* Style for the rotation buttons */
         .rotate-buttons {
@@ -328,8 +339,6 @@ input:checked + .slider:before {
         margin-top: 20px;
         text-align: center;
         }
-
-    /* Style for RPM Slider and Input */
         #rpmSlider,
         #rpmInput {
         width: 150px;
@@ -371,14 +380,15 @@ input:checked + .slider:before {
 
 <!-- Controller Buttons -->
 <div class="controls-container">
-<div class="controller">
-    <div id="controls">
-        <button id="keyboard_key_up" class="con-button" style="--clr:#39FF14"><span>FORWARD</span></button>
-        <button id="keyboard_key_left" class="con-button" style="--clr:#FF44CC"><span>LEFT</span></button>
-        <button id="keyboard_key_down" class="con-button" style="--clr:#0FF0FC"><span>BACKWARD</span></button>
-        <button id="keyboard_key_right" class="con-button" style="--clr:#8A2BE2"><span>RIGHT</span></button>
-        <button id="keyboard_key_upward"  class="con-button" style="--clr:#39FF14"><span>UPWARD</span></button>
-        <button id="keyboard_key_downward" class="con-button" style="--clr:#0FF0FC"><span>DOWNWARD</span></button>
+    <div class="controller">
+        <div id="controls">
+            <button id="keyboard_key_up" class="con-button" style="--clr:#39FF14" onclick="logButtonPress('FORWARD')"><span>FORWARD</span></button>
+            <button id="keyboard_key_left" class="con-button" style="--clr:#FF44CC" onclick="logButtonPress('LEFT')"><span>LEFT</span></button>
+            <button id="keyboard_key_down" class="con-button" style="--clr:#0FF0FC" onclick="logButtonPress('BACKWARD')"><span>BACKWARD</span></button>
+            <button id="keyboard_key_right" class="con-button" style="--clr:#8A2BE2" onclick="logButtonPress('RIGHT')"><span>RIGHT</span></button>
+            <button id="keyboard_key_upward"  class="con-button" style="--clr:#39FF14" onclick="logButtonPress('UPWARD')"><span>UPWARD</span></button>
+            <button id="keyboard_key_downward" class="con-button" style="--clr:#0FF0FC" onclick="logButtonPress('DOWNWARD')"><span>DOWNWARD</span></button>
+        </div>
     </div>
 </div>
 
@@ -388,14 +398,6 @@ input:checked + .slider:before {
 <div class="rotate-buttons">
     <button class="rot-button" onclick="rotate('anticlockwise')"><b>ANTICLOCKWISE</button>
     <button class="rot-button" style="--c:#E95A49" onclick="rotate('clockwise')">CLOCKWISE</b></button>
-</div>
-</div>
-<!-- On/Off Switch -->
-<div class="switch">
-    <label class="switch-label">
-        <input type="checkbox" id="onOffSwitch">
-        <span class="slider round"></span>
-    </label>
 </div>
 
 
@@ -506,6 +508,11 @@ input:checked + .slider:before {
     function move(direction) {
         // Implement movement logic based on direction
         console.log('Move ' + direction);
+    }
+
+    function logButtonPress(direction) {
+        console.log('Button pressed:', direction);
+        // You can add more logic here based on the button press
     }
 
     function rotate(rotation) {
